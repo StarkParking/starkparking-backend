@@ -1,10 +1,10 @@
-import { UserModel } from '../../helpers/database.js'
+import { UserModel } from '../../models/db.js'
 import logger from '../../helpers/logger.js'
 
 export const saveUser = async (req, res) => {
-  const { userId, username } = req.body
+  const { userId, username, walletAddress } = req.body
 
-  if ((!userId, !username)) {
+  if ((!userId, !username, !walletAddress)) {
     logger
       .debug('Missing required fields')
       .json({ result: false, message: 'Missing required fields' })
@@ -15,14 +15,12 @@ export const saveUser = async (req, res) => {
 
     if (user) {
       logger.debug('User already exists')
-      await db.User.updateOne({ userId }, { $set: { refreshToken } })
-
       return res
         .status(200)
-        .json({ result: true, accessToken, message: 'User already exists' })
+        .json({ result: true, message: 'User already exists' })
     }
 
-    const newUser = db.User({
+    const newUser = UserModel({
       userId,
       username
     })
@@ -31,7 +29,7 @@ export const saveUser = async (req, res) => {
 
     res
       .status(200)
-      .json({ result: true, accessToken, message: 'User saved successfully' })
+      .json({ result: true, message: 'User saved successfully' })
     logger.info(`User ${username} saved successfully`)
   } catch (error) {
     logger.error('Error saving user', error)

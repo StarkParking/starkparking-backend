@@ -43,7 +43,9 @@ const BookingModel = mongoose.model('Booking', bookingSchema)
 
 const userSchema = new mongoose.Schema({
   userId: { type: String, required: true },
-  username: { type: String, required: true }
+  username: { type: String, required: true },
+  walletAddress: { type: String, required: true },
+  booking_ids: [{ type: String }]
 })
 
 const UserModel = mongoose.model('User', userSchema)

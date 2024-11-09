@@ -1,4 +1,4 @@
-import Event from './models/Event.js'; // Import the Event model
+// import Event from './models/Event.js'; // Import the Event model
 
 // Function to add a new event to the database
 export const addEvent = async (eventData) => {
