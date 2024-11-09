@@ -1,0 +1,27 @@
+{
+  "name": "starkparking-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon ./src/index.js"
+  },
+  "author": "",
+  "type": "module",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@noble/secp256k1": "^1.7.1",
+    "axios": "^1.7.4",
+    "bn.js": "^5.2.1",
+    "config": "^3.3.12",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.2",
+    "mongoose": "^8.5.3",
+    "starknet": "^6.11.0"
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0",
+    "nodemon": "^3.0.1"
+  }
+}

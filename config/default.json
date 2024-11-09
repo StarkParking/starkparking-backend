@@ -1,0 +1,17 @@
+{
+  "db": {
+    "uri": "mongodb://127.0.0.1:27017/StarkParking"
+  },
+  "limit-per-interval": 1,
+  "time-update-event-interval": 3,
+  "rpcURL": "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
+  "contractAddress": "0x40a232b7ff87b58f3817f004b37a0e05164f81631bda2fd90c189cea53ad794",
+  "events": {
+    "ParkingLotRegistered": "starkparking_contract::parking::Parking::ParkingLotRegistered",
+    "ParkingBooked": "starkparking_contract::parking::Parking::ParkingBooked",
+    "ParkingExtended": "starkparking_contract::parking::Parking::ParkingExtended",
+    "ParkingEnded": "starkparking_contract::parking::Parking::ParkingEnded",
+    "PenaltyImposed": "starkparking_contract::parking::Parking::PenaltyImposed",
+    "PaymentTokenAdded": "starkparking_contract::parking::Parking::PaymentTokenAdded"
+  }
+}
