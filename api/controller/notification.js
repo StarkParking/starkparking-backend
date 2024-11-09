@@ -1,7 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { BookingModel, ParkingLotModel, UserModel } from '../../models/db.js'
 
-const TELEGRAM_BOT_TOKEN = '7635591930:AAHF_b_IdVHzIFAmufJ1tdlgQlNV9pMVXig';
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_TOKEN || '';
 
 // Initialize the Telegram bot
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
