@@ -1,5 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { BookingModel, ParkingLotModel, UserModel } from '../../models/db.js'
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_TOKEN || '';
 
