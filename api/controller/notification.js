@@ -3,10 +3,8 @@ import { BookingModel, ParkingLotModel, UserModel } from '../../models/db.js'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_TOKEN || '';
-
 // Initialize the Telegram bot
-const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
+const bot = new TelegramBot("2200179780:AAHndh0WFaoFiPIPqmv4lVnNmJXAv5kBPMA", { polling: true, testEnvironment: true });
 
 // Function to send a notification via Telegram
 const sendTelegramNotification = async (userId, message) => {
