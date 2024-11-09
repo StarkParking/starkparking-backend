@@ -1,13 +1,13 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
 // Define the schema for tokens
 const tokenSchema = new mongoose.Schema({
   address: { type: String, required: true },
   decimals: { type: Number, required: true }
-});
+})
 
 // Create a model for Token
-const TokenModel = mongoose.model('Token', tokenSchema);
+const TokenModel = mongoose.model('Token', tokenSchema)
 
 // Define the schema for parking lots
 const parkingLotSchema = new mongoose.Schema({
@@ -21,10 +21,10 @@ const parkingLotSchema = new mongoose.Schema({
   wallet_address: { type: String, required: true },
   is_active: { type: Boolean, default: true },
   registration_time: { type: Date, default: Date.now }
-});
+})
 
 // Create a model for ParkingLot
-const ParkingLotModel = mongoose.model('ParkingLot', parkingLotSchema);
+const ParkingLotModel = mongoose.model('ParkingLot', parkingLotSchema)
 
 // Define the schema for bookings
 const bookingSchema = new mongoose.Schema({
@@ -36,25 +36,32 @@ const bookingSchema = new mongoose.Schema({
   expiration_time: { type: Date },
   total_payment: { type: Number, required: true },
   payer: { type: String }
-});
+})
 
 // Create a model for Booking
-const BookingModel = mongoose.model('Booking', bookingSchema);
+const BookingModel = mongoose.model('Booking', bookingSchema)
+
+const userSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  username: { type: String, required: true }
+})
+
+const UserModel = mongoose.model('User', userSchema)
 
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    const dbURI = 'mongodb://127.0.0.1:27017/StarkParking'; 
-    await mongoose.connect(dbURI, { 
-      useNewUrlParser: true, 
-      useUnifiedTopology: true 
-    });
-    console.log('MongoDB connected');
+    const dbURI = 'mongodb://127.0.0.1:27017/StarkParking'
+    await mongoose.connect(dbURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+    console.log('MongoDB connected')
   } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1); // Exit the process if DB connection fails
+    console.error('MongoDB connection error:', error)
+    process.exit(1) // Exit the process if DB connection fails
   }
-};
+}
 
 // Export the models and connection function
-export { connectDB, TokenModel, ParkingLotModel, BookingModel };
+export { connectDB, TokenModel, ParkingLotModel, BookingModel, UserModel }
