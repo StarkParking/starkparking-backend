@@ -5,7 +5,6 @@ import api from './routes.js'
 import logger from '../helpers/logger.js'
 import { connectDB } from "../models/db.js";
 
-
 const app = express()
 const port = process.env.API_PORT || 3334
 

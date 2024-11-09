@@ -22,6 +22,7 @@
     "ethers": "^5.7.2",
     "express": "^4.21.1",
     "mongoose": "^8.5.3",
+    "node-telegram-bot-api": "^0.66.0",
     "starknet": "^6.11.0",
     "winston": "^3.16.0"
   },
