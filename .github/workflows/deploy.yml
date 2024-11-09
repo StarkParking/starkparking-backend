@@ -21,9 +21,6 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Build project
-        run: yarn build
-
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -38,5 +35,4 @@ jobs:
             cd starkparking-backend
             git pull origin main
             yarn install
-            yarn build || { echo "Build failed"; exit 1; }
             pm2 restart starkparking-backend
