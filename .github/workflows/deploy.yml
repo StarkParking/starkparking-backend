@@ -35,4 +35,4 @@ jobs:
             cd starkparking-backend
             git pull origin main
             yarn install
-            pm2 restart starkparking-backend
+            pm2 restart starkparking-api
