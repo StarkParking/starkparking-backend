@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   username: { type: String, required: true },
   walletAddress: { type: String, required: true },
-  booking_ids: [{ type: String }]
+  bookingIds: [{ type: String, unique: true }]
 })
 
 const UserModel = mongoose.model('User', userSchema)
