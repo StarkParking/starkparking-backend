@@ -1,4 +1,4 @@
-import { UserModel, BookingModel } from '../../models/db.js'
+import { UserModel, BookingModel, ParkingLotModel } from '../../models/db.js'
 import logger from '../../helpers/logger.js'
 
 export const saveUser = async (req, res) => {
@@ -81,11 +81,55 @@ export const getUserBookings = async (req, res) => {
 
     // Fetch the bookings by their IDs from the Booking collection
     const bookings = await BookingModel.find({ booking_id: { $in: user.bookingIds } });
-    console.log('bookings', bookings);
-    
 
-    // Return the booking details
-    return res.status(200).json({ result: true, message: 'Bookings fetched successfully', bookings });
+    if (bookings.length === 0) {
+      return res.status(200).json({ result: false, message: 'Bookings not found for this user' });
+    }
+
+    // Initialize an empty array to hold the bookings with parking lot details
+    const bookingsWithLotDetails = [];
+
+    // Loop through each booking and fetch corresponding parking lot details
+    for (let booking of bookings) {
+      const parkingLot = await ParkingLotModel.findOne({ lot_id: booking.lot_id });
+      console.log('booking', booking);
+      let booking2;
+      if (parkingLot) {
+        // Add the parking lot details to the booking object
+        booking2 = {
+          license_plate: booking.license_plate,
+          booking_id: booking.booking_id,
+          entry_time: booking.entry_time,
+          exit_time: booking.exit_time,
+          expiration_time: booking.expiration_time,
+          total_payment: booking.total_payment,
+          parking_lot: {
+            lot_id: parkingLot.lot_id,
+            name: parkingLot.name,
+            location: parkingLot.location,
+            coordinates: parkingLot.coordinates,
+            slot_count: parkingLot.slot_count,
+            hourly_rate_usd_cents: parkingLot.hourly_rate_usd_cents,
+            wallet_address: parkingLot.wallet_address,
+            is_active: parkingLot.is_active
+          }
+        };
+      } else {
+        booking.parkingLot = null; // If no parking lot found, set it to null
+      }
+
+      // Push the updated booking with parking lot details into the result array
+      bookingsWithLotDetails.push(booking2);
+    }
+
+    console.log('bookingsWithLotDetails', bookingsWithLotDetails);
+
+    // Return the list of bookings with parking lot details
+    return res.status(200).json({
+      result: true,
+      message: 'Bookings fetched successfully',
+      bookings: bookingsWithLotDetails
+    });
 
   } catch (error) {
     console.error('Error retrieving user bookings:', error);
