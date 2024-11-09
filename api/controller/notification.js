@@ -4,8 +4,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 // Initialize the Telegram bot
-// const bot = new TelegramBot("2200179780:AAHndh0WFaoFiPIPqmv4lVnNmJXAv5kBPMA", { polling: true, testEnvironment: true });
-const bot = new TelegramBot("7635591930:AAHF_b_IdVHzIFAmufJ1tdlgQlNV9pMVXig", { polling: true });
+const bot = new TelegramBot("2200179780:AAHndh0WFaoFiPIPqmv4lVnNmJXAv5kBPMA", { polling: true, testEnvironment: true });
 
 // Function to send a notification via Telegram
 const sendTelegramNotification = async (userId, message) => {
@@ -45,8 +44,8 @@ function formatTimestampToLocaleString(timeString) {
 }
 
 function convertToTimestamp(dateString) {
-  const date = new Date(dateString); // Parse the string into a Date object
-  return date.getTime(); // Return the timestamp (milliseconds since the Unix epoch)
+  const date = new Date(dateString);
+  return date.getTime();
 }
 
 export const sendNotificationNewBooking = async (req, res) => {
