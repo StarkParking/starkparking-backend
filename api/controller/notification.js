@@ -4,7 +4,8 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 // Initialize the Telegram bot
-const bot = new TelegramBot("2200179780:AAHndh0WFaoFiPIPqmv4lVnNmJXAv5kBPMA", { polling: true, testEnvironment: true });
+// const bot = new TelegramBot("2200179780:AAHndh0WFaoFiPIPqmv4lVnNmJXAv5kBPMA", { polling: true, testEnvironment: true });
+const bot = new TelegramBot("7635591930:AAHF_b_IdVHzIFAmufJ1tdlgQlNV9pMVXig", { polling: true });
 
 // Function to send a notification via Telegram
 const sendTelegramNotification = async (userId, message) => {
@@ -43,6 +44,10 @@ function formatTimestampToLocaleString(timeString) {
   return date.toLocaleString('en-GB', options);
 }
 
+function convertToTimestamp(dateString) {
+  const date = new Date(dateString); // Parse the string into a Date object
+  return date.getTime(); // Return the timestamp (milliseconds since the Unix epoch)
+}
 
 export const sendNotificationNewBooking = async (req, res) => {
   const { userId, lotId, licensePlate, entryTime, duration } = req.body;
@@ -90,8 +95,7 @@ export const sendNotificationEndBooking = async (req, res) => {
     }
 
     const parkingLot = await ParkingLotModel.findOne({ lot_id: booking.lot_id });
-    console.log('user', user);
-    console.log('booking', booking);
+
     if (!parkingLot) {
       return res.status(404).json({ result: false, message: 'Parking lot not found' });
     }
@@ -105,6 +109,46 @@ export const sendNotificationEndBooking = async (req, res) => {
 🔴 Exit Time: ${formatTimestamp(Number(exitTime) * 1000)}
 💰 Total Payment: $${booking.total_payment / 100}
 Thank you for using our service!
+`;
+    // Send the Telegram notification
+    await sendTelegramNotification(user.userId, message);
+
+    return res.status(200).json({ result: true, message: 'End booking notification sent' });
+
+  } catch (error) {
+    console.error('Error sending booking notification:', error);
+    return res.status(500).json({ result: false, message: 'Error sending notification' });
+  }
+}
+
+export const sendNotificationExtendBooking = async (req, res) => {
+  const { userId, bookingId, duration } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ userId: userId });
+    const booking = await BookingModel.findOne({ booking_id: bookingId });
+    if (!user) {
+      return res.status(404).json({ result: false, message: 'User not found' });
+    }
+    if (!booking) {
+      return res.status(404).json({ result: false, message: 'Booking not found' });
+    }
+
+    const parkingLot = await ParkingLotModel.findOne({ lot_id: booking.lot_id });
+    const expirationTime = Number(convertToTimestamp(booking.expiration_time)) + duration * 60 * 60 * 1000;
+    if (!parkingLot) {
+      return res.status(404).json({ result: false, message: 'Parking lot not found' });
+    }
+
+    const message = `
+🚘 Booking Extended!
+==================================
+🎯 Parking Lot: ${parkingLot.name}
+📍 License Plate: ${parkingLot.location}
+🪪 Entry Time: ${formatTimestampToLocaleString(booking.entry_time)}
+🔴 New Expiration Time: ${formatTimestamp(expirationTime)}
+💰 Total Payment: $${(Number(duration) * parkingLot.hourly_rate_usd_cents) / 100};
+Your parking session has been successfully extended.
 `;
     // Send the Telegram notification
     await sendTelegramNotification(user.userId, message);
