@@ -45,7 +45,7 @@ const main = async () => {
 
     const result = await myProvider.getEvents({
       address: CONTRACT_ADDRESS,
-      from_block: { block_number: latestBlock.block_number - 2000 },
+      from_block: { block_number: latestBlock.block_number - 50 },
       // from_block: { block_number: 163778 },
       to_block: { block_number: latestBlock.block_number },
       // keys: myKeys,
