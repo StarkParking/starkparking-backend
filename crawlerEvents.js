@@ -8,8 +8,8 @@ const REGISTERED = config.get('events.ParkingLotRegistered');
 const BOOKED = config.get('events.ParkingBooked');
 const EXTENDED = config.get('events.ParkingExtended');
 const ENDED = config.get('events.ParkingEnded');
-const PENALTY_IMPOSED = config.get('events.PenaltyImposed');
-const PAYMENT_TOKEN_ADDED = config.get('events.PaymentTokenAdded');
+// const PENALTY_IMPOSED = config.get('events.PenaltyImposed');
+// const PAYMENT_TOKEN_ADDED = config.get('events.PaymentTokenAdded');
 const RPC = config.get('rpcURL');
 
 // Connect to MongoDB
@@ -45,7 +45,7 @@ const main = async () => {
 
     const result = await myProvider.getEvents({
       address: CONTRACT_ADDRESS,
-      from_block: { block_number: latestBlock.block_number - 500 },
+      from_block: { block_number: latestBlock.block_number - 1000 },
       // from_block: { block_number: 163778 },
       to_block: { block_number: latestBlock.block_number },
       // keys: myKeys,
@@ -60,8 +60,8 @@ const main = async () => {
       const bookedEvent = event[BOOKED];
       const extendedEvent = event[EXTENDED];
       const endedEvent = event[ENDED];
-      const penaltyImposedEvent = event[PENALTY_IMPOSED];
-      const paymentTokenAddedEvent = event[PAYMENT_TOKEN_ADDED];
+      // const penaltyImposedEvent = event[PENALTY_IMPOSED];
+      // const paymentTokenAddedEvent = event[PAYMENT_TOKEN_ADDED];
 
       // Check if the event is a registered event
       if (registeredEvent) {
@@ -128,22 +128,21 @@ const main = async () => {
         console.log('extendedEvent', extendedEvent);
         let booking_id = extendedEvent?.booking_id.toString();
         booking_id = parseBNToStr(booking_id);
-        console.log('extendedEvent booking_id', booking_id);
-        // try {
-        //     const booking = await BookingModel.findOne({ booking_id: booking_id });
-        //     if (booking) {
-        //       // Update total_payment and expiration_time
-        //       booking.total_payment = Number(extendedEvent.total_payment.toString());
-        //       booking.expiration_time = new Date(booking.expiration_time.getTime() + (extendedEvent.additional_hours * 60 * 60 * 1000)); // Update expiration_time
-        //       // Save the updated booking
-        //       await booking.save();
-        //       console.log('Booking updated:', booking);
-        //     } else {
-        //       console.error('Booking not found for booking_id:', booking_id);
-        //     }
-        // } catch (error) {
-        //     console.error('Error updating booking:', error);
-        // }
+        try {
+            const booking = await BookingModel.findOne({ booking_id: booking_id });
+            if (booking && booking.exit_time === null) {
+              const eventTimestamp = Number(extendedEvent?.timestamp.toString()) * 1000;
+              if (eventTimestamp > booking.expiration_time.getTime()) {
+                booking.total_payment = Number(extendedEvent.total_payment.toString());
+                booking.expiration_time = new Date(booking.expiration_time.getTime() + (Number(extendedEvent.additional_hours.toString()) * 60 * 60 * 1000)); // Update expiration_time
+                // Save the updated booking
+                await booking.save();
+                console.log('Booking updated:', booking);
+              }
+            }
+        } catch (error) {
+            console.error('Error updating booking:', error);
+        }
       }
       if (endedEvent) {
         let booking_id = endedEvent?.booking_id.toString();
@@ -163,20 +162,10 @@ const main = async () => {
           console.error('Error updating booking:', error);
         }
       }
-      if (penaltyImposedEvent) {
-        console.log('penaltyImposedEvent', penaltyImposedEvent);
-      }
-      if (paymentTokenAddedEvent) {
-        console.log('paymentTokenAddedEvent', paymentTokenAddedEvent);
-        let token = paymentTokenAddedEvent?.payment_token.toString();
-        token = toHex(token);
-        console.log('token', token);
-      }
     });
 
     // Wait for all processing promises to complete
     await Promise.all(processingPromises);
-    // }
   } catch (error) {
     console.error('Error while listening to contract events:', error.message);
   }
