@@ -5,6 +5,9 @@ import api from './routes.js'
 import logger from '../helpers/logger.js'
 import { connectDB } from "../models/db.js";
 
+import * as dotenv from 'dotenv'
+dotenv.config()
+
 const app = express()
 const port = process.env.API_PORT || 3334
 
